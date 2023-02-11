@@ -43,10 +43,11 @@ router.post("/api/chatgpt", async (ctx) => {
     ctx.type = 'text/event-stream';
     ctx.set('Cache-Control', 'no-cache');
     ctx.set('Connection', 'keep-alive');
-    // console.log('postData: ', postData);
+    console.log('postData: ', postData);
     const dataStream = new stream.Readable();
-    dataStream._read = () => { };
+    dataStream._read = (size) => { };
     getAnswer(postData.message, (msgstream) => {
+        console.log('msgstream: ', msgstream);
         dataStream.push(msgstream);
     })
 

@@ -58,9 +58,6 @@ function App() {
           });
           read();
         });
-        reader.closed.then(c => {
-          console.log('c: ', c);
-        });
       }
 
       read();
