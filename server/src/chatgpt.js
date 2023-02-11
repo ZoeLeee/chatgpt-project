@@ -29,8 +29,8 @@ const cacheOptions = {
 
 const chatGptClient = new ChatGPTClient(OPENAI_API_KEY, clientOptions, cacheOptions);
 
-const response = await chatGptClient.sendMessage('Hello!');
-console.log(response); // { response: 'Hi! How can I help you today?', conversationId: '...', messageId: '...' }
+// const response = await chatGptClient.sendMessage('Hello!');
+// console.log(response); // { response: 'Hi! How can I help you today?', conversationId: '...', messageId: '...' }
 
 // const response2 = await chatGptClient.sendMessage('Write a poem about cats.', { conversationId: response.conversationId, parentMessageId: response.messageId });
 // console.log(response2.response); // Cats are the best pets in the world.
@@ -40,15 +40,15 @@ console.log(response); // { response: 'Hi! How can I help you today?', conversat
 //   parentMessageId: response2.messageId,
 //   // If you want streamed responses, you can set the `onProgress` callback to receive the response as it's generated.
 //   // You will receive one token at a time, so you will need to concatenate them yourself.
-//   onProgress: (token) => console.log(token),
+//   onProgress: (token) => console.log("token", token),
 // });
 // console.log(response3.response); // Les chats sont les meilleurs animaux de compagnie du monde.
 
 let conversationId;
 let messageId;
 
-export async function getAnswer(msg) {
-  const res = await chatGptClient.sendMessage(msg, { conversationId, parentMessageId: messageId, onProgress: (token) => console.log(token), });
+export async function getAnswer(msg, onProgress) {
+  const res = await chatGptClient.sendMessage(msg, { conversationId, parentMessageId: messageId, onProgress });
   conversationId = res.conversationId
   messageId = res.messageId
   return res

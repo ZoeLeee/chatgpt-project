@@ -20,21 +20,53 @@ async function postData(url = '', data = {}) {
     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: JSON.stringify(data) // body data type must match "Content-Type" header
   });
-  return response.json(); // parses JSON response into native JavaScript objects
+  return response; // parses JSON response into native JavaScript objects
 }
 
 function App() {
   const [messages, setMessages] = useState<{ id: string, msg: string; }[]>([]);
   const [msg, setMsg] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const handleKeydown = async () => {
     if (!msg) return;
     setMessages(messages => [...messages, { id: Date.now().toString(), msg }]);
-    const res = await postData(host + "/api/chatgpt", { message: msg });
-    setMessages(messages => [...messages, {
-      msg: res.response,
-      id: res.messageId
-    }]);
+
+    postData(host + "/api/chatgpt", { message: msg }).then(response => {
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let msg = "";
+      let id = Date.now().toString();
+      function read() {
+        reader.read().then(({ value, done }) => {
+          console.log('done: ', done);
+          if (done) {
+            console.log('Stream is closed');
+            return;
+          }
+
+          msg += decoder.decode(value);
+          setMessages(messages => {
+            const m = messages.find(msg => msg.id === id);
+            if (m) {
+              m.msg = msg;
+            } else {
+              messages.push({
+                msg, id
+              });
+            }
+            return [...messages];
+          });
+          read();
+        });
+        reader.closed.then(c => {
+          console.log('c: ', c);
+        });
+      }
+
+      read();
+    });
+
+
     setMsg("");
   };
 
@@ -52,7 +84,7 @@ function App() {
         }
       </div>
       <div className='input'>
-        <input value={msg} onChange={(e) => setMsg(e.target.value)} />
+        <input disabled={loading} value={msg} onChange={(e) => setMsg(e.target.value)} />
         <button onClick={handleKeydown}>发送</button>
       </div>
     </div>

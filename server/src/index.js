@@ -4,6 +4,7 @@ import Router from 'koa-router';
 import { fileURLToPath } from 'url';
 import path from "path"
 import bodyParser from "koa-bodyparser"
+import stream from "stream"
 import { getAnswer } from './chatgpt.js';
 
 
@@ -39,10 +40,17 @@ router.get('/api/hello', (ctx, next) => {
 });
 router.post("/api/chatgpt", async (ctx) => {
     let postData = ctx.request.body
-    console.log('postData: ', postData);
-    const res = await getAnswer(postData.message)
-    ctx.status = 200
-    ctx.body = res
+    ctx.type = 'text/event-stream';
+    ctx.set('Cache-Control', 'no-cache');
+    ctx.set('Connection', 'keep-alive');
+    // console.log('postData: ', postData);
+    const dataStream = new stream.Readable();
+    dataStream._read = () => { };
+    getAnswer(postData.message, (msgstream) => {
+        dataStream.push(msgstream);
+    })
+
+    ctx.body = dataStream
 })
 
 app
