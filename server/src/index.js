@@ -39,6 +39,7 @@ router.get('/api/hello', (ctx, next) => {
 });
 router.post("/api/chatgpt", async (ctx) => {
     let postData = ctx.request.body
+    console.log('postData: ', postData);
     const res = await getAnswer(postData.message)
     ctx.status = 200
     ctx.body = res

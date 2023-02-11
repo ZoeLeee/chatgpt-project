@@ -29,8 +29,9 @@ function App() {
 
   const handleKeydown = async () => {
     if (!msg) return;
+    setMessages(messages => [...messages, { id: Date.now().toString(), msg }]);
     const res = await postData(host + "/api/chatgpt", { messages: msg });
-    setMessages([...messages, { id: Date.now().toString(), msg }, {
+    setMessages(messages => [...messages, {
       msg: res.response,
       id: res.messageId
     }]);

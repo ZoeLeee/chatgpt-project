@@ -1,6 +1,7 @@
 import { ChatGPTClient } from '@waylaidwanderer/chatgpt-api';
+import config from "./config.js"
 
-const OPENAI_API_KEY = "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"
+const OPENAI_API_KEY = config.ApiKey
 
 const clientOptions = {
   // (Optional) Parameters as described in https://platform.openai.com/docs/api-reference/completions
@@ -28,8 +29,8 @@ const cacheOptions = {
 
 const chatGptClient = new ChatGPTClient(OPENAI_API_KEY, clientOptions, cacheOptions);
 
-// const response = await chatGptClient.sendMessage('Hello!');
-// console.log(response); // { response: 'Hi! How can I help you today?', conversationId: '...', messageId: '...' }
+const response = await chatGptClient.sendMessage('Hello!');
+console.log(response); // { response: 'Hi! How can I help you today?', conversationId: '...', messageId: '...' }
 
 // const response2 = await chatGptClient.sendMessage('Write a poem about cats.', { conversationId: response.conversationId, parentMessageId: response.messageId });
 // console.log(response2.response); // Cats are the best pets in the world.

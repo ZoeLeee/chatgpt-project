@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start:server": "node server/src/index.js",
+    "dev:server": "nodemon server/src/index.js",
     "dev": "vite  client/",
     "build": "vite build client/",
     "preview": "vite preview"
