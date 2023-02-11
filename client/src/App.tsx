@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import './App.css';
 
-const host = location.href.includes("localhost") ? "http://localhost:3000" : "";
+const host = location.href.includes("localhost") ? "http://localhost:3000" : "http://chatgpt.dodream.cn:3000";
 
 // Example POST method implementation:
 async function postData(url = '', data = {}) {
