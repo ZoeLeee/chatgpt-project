@@ -23,7 +23,7 @@ app.use(serve(path.resolve(__dirname, '../../client/dist')));
 
 app.use(async (ctx, next) => {
     ctx.set('Access-Control-Allow-Origin', '*');
-    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization,Connection, Accept, X-Requested-With ,Cache-Control');
+    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization,Connection,Accept,X-Requested-With,Cache-Control');
     ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
     if (ctx.method == 'OPTIONS') {
         ctx.body = 200;
@@ -40,14 +40,15 @@ router.get('/api/hello', (ctx, next) => {
 });
 router.post("/api/chatgpt", async (ctx) => {
     let postData = ctx.request.body
-    ctx.type = 'text/event-stream';
-    ctx.set('Cache-Control', 'no-cache');
-    ctx.set('Connection', 'keep-alive');
+    ctx.response.set({
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+    });
     console.log('postData: ', postData);
     const dataStream = new stream.Readable();
     dataStream._read = (size) => { };
     getAnswer(postData.message, (msgstream) => {
-        console.log('msgstream: ', msgstream);
         dataStream.push(msgstream);
     })
 

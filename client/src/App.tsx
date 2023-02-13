@@ -9,15 +9,11 @@ async function postData(url = '', data = {}) {
   // Default options are marked with *
   const response = await fetch(url, {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    mode: 'cors', // no-cors, *cors, same-origin
     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: 'same-origin', // include, *same-origin, omit
     headers: {
       'Content-Type': 'application/json'
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },
-    redirect: 'follow', // manual, *follow, error
-    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: JSON.stringify(data) // body data type must match "Content-Type" header
   });
   return response; // parses JSON response into native JavaScript objects
@@ -69,10 +65,13 @@ function App() {
 
   return (
     <div className="App">
-      <div className='content'>
+      <div className='content' style={{ padding: 10 }}>
         {
-          messages.map(msg => <pre key={msg.id}>
-            <code>
+          messages.map(msg => <pre key={msg.id} style={{ padding: 5 }}>
+            <code style={{
+              display: "block",
+              whiteSpace: "break-spaces"
+            }}>
               {
                 msg.msg
               }
@@ -81,8 +80,15 @@ function App() {
         }
       </div>
       <div className='input'>
-        <input disabled={loading} value={msg} onChange={(e) => setMsg(e.target.value)} />
+        <input disabled={loading} value={msg} onChange={(e) => setMsg(e.target.value)} onKeyDown={e => {
+          if (e.code === "Enter") {
+            handleKeydown();
+          }
+        }} />
         <button onClick={handleKeydown}>发送</button>
+      </div>
+      <div style={{ position: "fixed", right: 10, top: 10 }}>
+        <a href="https://github.com/ZoeLeee/chatgpt-project.git">GitHub</a>
       </div>
     </div>
   );
