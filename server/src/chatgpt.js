@@ -1,5 +1,7 @@
 import { ChatGPTClient } from '@waylaidwanderer/chatgpt-api';
 import config from "./config.js"
+import { ChatGPTUnofficialProxyAPI } from 'chatgpt'
+
 
 const OPENAI_API_KEY = config.ApiKey
 
