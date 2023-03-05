@@ -49,7 +49,8 @@ router.post("/api/chatgpt", async (ctx) => {
     const dataStream = new stream.Readable();
     dataStream._read = (size) => { };
     getAnswer(postData.message, (msgstream) => {
-        dataStream.push(msgstream);
+        console.log('msgstream.text: ', msgstream.text);
+        dataStream.push(msgstream.text);
     })
 
     ctx.body = dataStream

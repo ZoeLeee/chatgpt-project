@@ -4,6 +4,8 @@ import './App.css';
 
 const host = location.href.includes("localhost") ? "http://localhost:3000" : "http://chatgpt.dodream.cn:3000";
 
+let doing = false;
+
 // Example POST method implementation:
 async function postData(url = '', data = {}) {
   // Default options are marked with *
@@ -40,7 +42,7 @@ function App() {
             return;
           }
 
-          msg += decoder.decode(value);
+          msg = decoder.decode(value);
           setMessages(messages => {
             const m = messages.find(msg => msg.id === id);
             if (m) {
@@ -80,11 +82,14 @@ function App() {
         }
       </div>
       <div className='input'>
-        <input disabled={loading} value={msg} onChange={(e) => setMsg(e.target.value)} onKeyDown={e => {
-          if (e.code === "Enter") {
-            handleKeydown();
-          }
-        }} />
+        <input disabled={loading} value={msg} onChange={(e) => setMsg(e.target.value)}
+          onCompositionStart={() => { doing = true; }}
+          onCompositionEnd={() => { doing = false; }}
+          onKeyDown={e => {
+            if (e.code === "Enter" && !doing) {
+              handleKeydown();
+            }
+          }} />
         <button onClick={handleKeydown}>发送</button>
       </div>
       <div style={{ position: "fixed", right: 10, top: 10 }}>
