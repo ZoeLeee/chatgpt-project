@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import './App.css';
 
-const host = location.href.includes("localhost") ? "http://localhost:3000" : "http://chatgpt.dodream.cn:3000";
+const host = location.href.includes("localhost") ? "http://localhost:3000" : "https://www.dodream.cn/chatgptproxy";
 
 let doing = false;
 
@@ -18,7 +18,7 @@ async function postData(url = '', data = {}) {
     },
     body: JSON.stringify(data) // body data type must match "Content-Type" header
   });
-  return response; // parses JSON response into native JavaScript objects
+  return response.json(); // parses JSON response into native JavaScript objects
 }
 
 function App() {
@@ -28,41 +28,13 @@ function App() {
   const handleKeydown = async () => {
     if (!msg) return;
     setMessages(messages => [...messages, { id: Date.now().toString(), msg }]);
-
-    postData(host + "/api/chatgpt", { message: msg }).then(response => {
-      const reader = response.body!.getReader();
-      const decoder = new TextDecoder();
-      let msg = "";
-      let id = Date.now().toString();
-      function read() {
-        reader.read().then(({ value, done }) => {
-          console.log('done: ', done);
-          if (done) {
-            console.log('Stream is closed');
-            return;
-          }
-
-          msg = decoder.decode(value);
-          setMessages(messages => {
-            const m = messages.find(msg => msg.id === id);
-            if (m) {
-              m.msg = msg;
-            } else {
-              messages.push({
-                msg, id
-              });
-            }
-            return [...messages];
-          });
-          read();
-        });
-      }
-
-      read();
-    });
-
-
+    setLoading(true);
+    const result = await postData(host + "/api/chatgpt", { message: msg }) as any;
+    console.log('result: ', result);
+    setLoading(false);
     setMsg("");
+    console.log('result.text: ', result.text);
+    setMessages(messages => [...messages, { id: Date.now().toString(), msg: result.text }]);
   };
 
   return (
@@ -80,6 +52,7 @@ function App() {
             </code>
           </pre>)
         }
+        {loading && <div>正在生成回复</div>}
       </div>
       <div className='input'>
         <input disabled={loading} value={msg} onChange={(e) => setMsg(e.target.value)}

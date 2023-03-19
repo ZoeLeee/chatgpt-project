@@ -40,20 +40,22 @@ router.get('/api/hello', (ctx, next) => {
 });
 router.post("/api/chatgpt", async (ctx) => {
     let postData = ctx.request.body
-    ctx.response.set({
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-    });
-    console.log('postData: ', postData);
-    const dataStream = new stream.Readable();
-    dataStream._read = (size) => { };
-    getAnswer(postData.message, (msgstream) => {
-        console.log('msgstream.text: ', msgstream.text);
-        dataStream.push(msgstream.text);
-    })
+    // ctx.response.set({
+    //     "Content-Type": "text/event-stream",
+    //     "Cache-Control": "no-cache",
+    //     "Connection": "keep-alive",
+    // });
+    // console.log('postData: ', postData);
+    // const dataStream = new stream.Readable();
+    // dataStream._read = (size) => { };
+    // getAnswer(postData.message, (msgstream) => {
+    //     console.log('msgstream.text: ', msgstream.text);
+    //     dataStream.push(msgstream.text);
+    // })
+    const res = await getAnswer(postData.message)
+    console.log('res: ', res);
 
-    ctx.body = dataStream
+    ctx.body = res
 })
 
 app

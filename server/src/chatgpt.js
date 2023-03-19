@@ -16,7 +16,7 @@ const api = new ChatGPTAPI({
   apiKey: OPENAI_API_KEY,
   fetch: (url, options = {}) => {
     const defaultOptions = {
-      agent: agent('http://192.168.100.77:1081')
+      agent: agent(config.Proxy)
     };
 
     const mergedOptions = {
